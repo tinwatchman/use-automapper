@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+'use strict';
+
+var Automapper = require('../automap'),
+    sc = require('subcommander'),
+    _ = require('underscore');
+
+var autoMapper = new Automapper();
+
+sc.scriptName('use-automapper');
+
+sc.command('version', {
+    desc: 'displays version',
+    callback: function() {
+        console.log(autoMapper.version());
+    }
+});
+
+sc.command('run', {
+    desc: 'Automatically creates a use.json file for an existing Node project',
+    callback: function(params) {
+        var options = {};
+        if (_.has(params, 'output') && !_.isEmpty(params.output)) {
+            options['outputPath'] = params.output;
+        }
+        if (_.has(params, 'disable-file-parsing') && 
+            params['disable-file-parsing'] === true) {
+            options['isParsingFiles'] = false;
+        } else {
+            options['isParsingFiles'] = true;
+        }
+        var mapPath = autoMapper.sync.mapPath(params.path, options);
+        console.log('complete');
+        console.log('map written to %s', mapPath);
+    }
+}).option('path', {
+    'abbr': 'p',
+    'desc': 'Path to the project folder. Defaults to current directory.',
+    'default': process.cwd()
+}).option('output', {
+    'abbr': 'o',
+    'desc': 'Optional. Sets a specific path to output the finished JSON config file to.'
+}).option('disable-file-parsing', {
+    'abbr': 'd',
+    'desc': 'Disables parsing the file content for commented names.',
+    'flag': true,
+    'default': false
+});
+
+sc.parse();

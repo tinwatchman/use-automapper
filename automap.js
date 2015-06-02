@@ -4,6 +4,7 @@ module.exports = (function() {
     var use = require('use-import').load();
     var AutomapperAsync = use('AutomapperAsync');
     var AutomapperSync = use('AutomapperSync');
+    var ownVersion = require('own-version');
 
     var Automapper = function() {
         var async = new AutomapperAsync(),
@@ -29,6 +30,11 @@ module.exports = (function() {
 
         this.sync.mapFiles = function(files, options) {
             return sync.mapFiles(files, options);
+        };
+
+        // version
+        this.version = function() {
+            return ownVersion.sync();
         };
     };
     Automapper.prototype = {};
