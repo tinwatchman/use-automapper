@@ -1,0 +1,23 @@
+{
+  "name": "use-automapper",
+  "version": "0.0.1",
+  "description": "Automatically creates use.json files for `use-import`",
+  "main": "automap.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": {
+    "name": "Jon Stout",
+    "url": "http://www.jonstout.net"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.0.0",
+    "underscore": "^1.8.3",
+    "use-import": "^0.1.0"
+  },
+  "devDependencies": {
+    "fs-extra": "^0.18.4",
+    "jasmine": "^2.3.1"
+  }
+}
