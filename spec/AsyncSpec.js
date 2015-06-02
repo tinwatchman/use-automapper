@@ -4,11 +4,13 @@ describe("AutomapperAsync", function() {
         use.load(require.resolve('../use.json'));
     }
     var AutomapperAsync = use('AutomapperAsync');
+    var AutomapperCommonUtil = use('AutomapperCommonUtil');
     var fs = require('fs-extra');
     var path = require('path');
     var _ = require('underscore');
 
     var async,
+        util = new AutomapperCommonUtil(),
         tmpDir = path.join(__dirname, "./AutomapperAsync" + Date.now() + "/");
 
     beforeAll(function() {
