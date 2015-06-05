@@ -1,5 +1,5 @@
 # use-automapper
-> Automatically creates maps from existing projects for [`use-import`](https://github.com/tinwatchman/use-import)
+> Automatically creates maps from existing projects for [`use-import`](https://www.npmjs.com/package/use-import)
 
 ## Installation
 

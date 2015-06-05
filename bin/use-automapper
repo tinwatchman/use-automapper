@@ -29,6 +29,13 @@ sc.command('run', {
         } else {
             options['isParsingFiles'] = true;
         }
+        if (_.has(params, 'use-path-style-names') && 
+            params['use-path-style-names'] === true) {
+            options['isUsingPathStyleNames'] = true;
+        } else if (_.has(params, 'use-java-style-names') &&
+            params['use-java-style-names'] === true) {
+            options['isUsingJavaStyleNames'] = true;
+        }
         var mapPath = autoMapper.sync.mapPath(params.path, options);
         console.log('complete');
         console.log('map written to %s', mapPath);
@@ -43,6 +50,16 @@ sc.command('run', {
 }).option('disable-file-parsing', {
     'abbr': 'd',
     'desc': 'Disables parsing the file content for commented names.',
+    'flag': true,
+    'default': false
+}).option('use-path-style-names', {
+    'abbr': 's',
+    'desc': 'Adds relative path from the project root directory to a module\'s name. Might help developers with namespacing/file locations.',
+    'flag': true,
+    'default': false
+}).option('use-java-style-names', {
+    'abbr': 'j',
+    'desc': 'Adds Java-style package path to the beginning of a module\'s name, i.e. project.package.ClassName. Might help developers with namespacing/file locations.',
     'flag': true,
     'default': false
 });

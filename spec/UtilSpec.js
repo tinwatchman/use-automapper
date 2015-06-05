@@ -9,7 +9,7 @@ describe("AutomapperCommonUtil", function() {
     beforeEach(function() {
         util = new AutomapperCommonUtil();
     });
-    
+
     describe("parseFileData", function() {
         it("should parse a given string (representing file data) and find " + 
             "any name comments within it", function() {
@@ -49,6 +49,25 @@ describe("AutomapperCommonUtil", function() {
         });
     });
 
+    describe("getPathStyleName", function() {
+        it("should return the path of a module as its name", function() {
+            expect(util.getPathStyleName("MyClass", "./a/b/c/MyClass")).toEqual("a/b/c/MyClass");
+            expect(util.getPathStyleName("MyClass", "./a/b/c/MyFile")).toEqual("a/b/c/MyClass");
+            expect(util.getPathStyleName("My File", "./a/b/c/MyClass")).toEqual("a/b/c/My File");
+        });
+    });
+
+    describe("getJavaStyleName", function() {
+        it("should return the complete name of a module, formatted Java-style", function() {
+            expect(util.getJavaStyleName("MyClass", "./package/MyClass")).toEqual("package.MyClass");
+            expect(util.getJavaStyleName("MyClass", "./package/myfile")).toEqual("package.MyClass");
+            expect(util.getJavaStyleName("my File Name", "./package/my File Name")).toEqual("package.MyFileName");
+            expect(util.getJavaStyleName("MyClass", ".//package/data/myfile")).toEqual("package.data.MyClass");
+            expect(util.getJavaStyleName("Blue", "./a/b/c/d/e")).toEqual("a.b.c.d.Blue");
+            expect(util.getJavaStyleName("red", "./a//b/c/d/e")).toEqual("a.b.c.d.Red");
+        });
+    });
+
     describe("getRelativeFilePath", function() {
         it("should return a relative file path from given root to given file", function() {
             var r = util.getRelativeFilePath(
@@ -83,7 +102,10 @@ describe("AutomapperCommonUtil", function() {
                     "/Users/someone/something/lib/Class2.js"
                 ],
                 root = "/Users/someone/something";
-            var r = util.makeUseMap(files, root);
+            var r = util.makeUseMap({
+                'files': files,
+                'rootDir': root
+            });
             expect(r).not.toBeNull();
             expect(r.index).toBeDefined();
             expect(r.index).toEqual("./index");
@@ -100,7 +122,10 @@ describe("AutomapperCommonUtil", function() {
                     "C:\\Users\\someone\\something\\lib\\Class2.js"
                 ],
                 root = "C:\\Users\\someone\\something";
-            var r = util.makeUseMap(files, root);
+            var r = util.makeUseMap({
+                'files': files,
+                'rootDir': root
+            });
             expect(r).not.toBeNull();
             expect(r.index).toBeDefined();
             expect(r.index).toEqual("./index");
@@ -121,7 +146,11 @@ describe("AutomapperCommonUtil", function() {
                     "/Users/someone/something/lib/one/class.js": "Class1",
                     "/Users/someone/something/lib/two/class.js": "Class2"
                 };
-            var r = util.makeUseMap(files, root, names);
+            var r = util.makeUseMap({
+                'files': files,
+                'rootDir': root,
+                'names': names
+            });
             expect(r).not.toBeNull();
             expect(r.index).toBeDefined();
             expect(r.index).toEqual("./index");
@@ -138,7 +167,10 @@ describe("AutomapperCommonUtil", function() {
                     "/Users/someone/something/lib/package/index.js"
                 ],
                 root = "/Users/someone/something";
-            var r = util.makeUseMap(files, root);
+            var r = util.makeUseMap({
+                'files': files,
+                'rootDir': root
+            });
             expect(r).not.toBeNull();
             expect(r.index).toBeDefined();
             expect(r.index).toEqual("./index");
@@ -146,6 +178,57 @@ describe("AutomapperCommonUtil", function() {
             expect(r.index1).toEqual("./lib/index");
             expect(r.index2).toBeDefined();
             expect(r.index2).toEqual("./lib/package/index");
+        });
+
+        it("should support path-style names", function() {
+            var files = [
+                    "/Users/someone/something/index.js",
+                    "/Users/someone/something/lib/Class1.js",
+                    "/Users/someone/something/lib/Class2.js"
+                ],
+                root = "/Users/someone/something";
+            var r = util.makeUseMap({
+                'files': files,
+                'rootDir': root,
+                'isUsingPathNames': true
+            });
+            expect(r).not.toBeNull();
+            expect(r['index']).toBeDefined();
+            expect(r['index']).toEqual("./index");
+            expect(r['lib/Class1']).toBeDefined();
+            expect(r['lib/Class1']).toEqual("./lib/Class1");
+            expect(r['lib/Class2']).toBeDefined();
+            expect(r['lib/Class2']).toEqual("./lib/Class2");
+        });
+
+        it("should support Java-style names", function() {
+            var files = [
+                    "/Users/someone/something/index.js",
+                    "/Users/someone/something/lib/one/class.js",
+                    "/Users/someone/something/lib/two/class.js",
+                    "/Users/someone/something/lib/three/class.js"
+                ],
+                root = "/Users/someone/something",
+                names = {
+                    "/Users/someone/something/lib/one/class.js": "Class1",
+                    "/Users/someone/something/lib/two/class.js": "class2",
+                    "/Users/someone/something/lib/three/class.js": "Class 3"
+                };
+            var r = util.makeUseMap({
+                'files': files,
+                'rootDir': root,
+                'names': names,
+                'isUsingJavaNames': true
+            });
+            expect(r).not.toBeNull();
+            expect(r['Index']).toBeDefined();
+            expect(r['Index']).toEqual("./index");
+            expect(r['lib.one.Class1']).toBeDefined();
+            expect(r['lib.one.Class1']).toEqual("./lib/one/class");
+            expect(r['lib.two.Class2']).toBeDefined();
+            expect(r['lib.two.Class2']).toEqual("./lib/two/class");
+            expect(r['lib.three.Class3']).toBeDefined();
+            expect(r['lib.three.Class3']).toEqual("./lib/three/class");
         });
     });
 });
