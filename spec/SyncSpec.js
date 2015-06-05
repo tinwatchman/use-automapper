@@ -181,6 +181,76 @@ describe("AutomapperSync", function() {
             // clear environment
             fs.removeSync(root);
         });
+        
+        it("should support the isUsingPathStyleNames option", function() {
+            // create environment
+            var root = path.join(tmpDir, "./mapFiles"),
+                indexFile = path.join(root, "./index.js"),
+                level1 = path.join(root, "./level1"),
+                file1 = path.join(level1, "./Class1.js"),
+                level2 = path.join(level1, "./level2"),
+                file2 = path.join(level2, "./file2.js");
+            fs.ensureDirSync(root);
+            fs.ensureDirSync(level1);
+            fs.ensureDirSync(level2);
+            fs.writeFileSync(indexFile, "/* use-automapper: TestIndex */", {'encoding': 'utf8'});
+            fs.writeFileSync(file2, "\n\n/* use-automapper: Class2 */\n\n");
+            fs.ensureFileSync(file1);
+            // run test
+            var useFilePath = sync.mapFiles([indexFile, file1, file2], {
+                'rootDir': root, 
+                'isParsingFiles': true,
+                'isUsingPathStyleNames': true
+            });
+            // set expectations
+            expect(useFilePath).toBeDefined();
+            expect(useFilePath).not.toBeNull();
+            expect(path.normalize(useFilePath)).toEqual(path.join(root, "./use.json"));
+            var useData = fs.readJsonSync(useFilePath);
+            expect(useData.TestIndex).toBeDefined();
+            expect(useData.TestIndex).toEqual("./index");
+            expect(useData["level1/Class1"]).toBeDefined();
+            expect(useData["level1/Class1"]).toEqual("./level1/Class1");
+            expect(useData["level1/level2/Class2"]).toBeDefined();
+            expect(useData["level1/level2/Class2"]).toEqual("./level1/level2/file2");
+            // clear environment
+            fs.removeSync(root);
+        });
+        
+        it("should support the isUsingJavaStyleNames option", function() {
+            // create environment
+            var root = path.join(tmpDir, "./mapFiles"),
+                indexFile = path.join(root, "./index.js"),
+                level1 = path.join(root, "./level1"),
+                file1 = path.join(level1, "./Class1.js"),
+                level2 = path.join(level1, "./level2"),
+                file2 = path.join(level2, "./file2.js");
+            fs.ensureDirSync(root);
+            fs.ensureDirSync(level1);
+            fs.ensureDirSync(level2);
+            fs.writeFileSync(indexFile, "/* use-automapper: TestIndex */", {'encoding': 'utf8'});
+            fs.writeFileSync(file2, "\n\n/* use-automapper: Class2 */\n\n");
+            fs.ensureFileSync(file1);
+            // run test
+            var useFilePath = sync.mapFiles([indexFile, file1, file2], {
+                'rootDir': root, 
+                'isParsingFiles': true,
+                'isUsingJavaStyleNames': true
+            });
+            // set expectations
+            expect(useFilePath).toBeDefined();
+            expect(useFilePath).not.toBeNull();
+            expect(path.normalize(useFilePath)).toEqual(path.join(root, "./use.json"));
+            var useData = fs.readJsonSync(useFilePath);
+            expect(useData.TestIndex).toBeDefined();
+            expect(useData.TestIndex).toEqual("./index");
+            expect(useData["level1.Class1"]).toBeDefined();
+            expect(useData["level1.Class1"]).toEqual("./level1/Class1");
+            expect(useData["level1.level2.Class2"]).toBeDefined();
+            expect(useData["level1.level2.Class2"]).toEqual("./level1/level2/file2");
+            // clear environment
+            fs.removeSync(root);
+        });
     });
 
     describe("mapPath", function() {

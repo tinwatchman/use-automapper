@@ -170,8 +170,44 @@ describe("AutomapperAsync", function() {
                 done();
             });
         });
-    });
 
+        it("should support the isUsingPathStyleNames option", function(done) {
+            async.mapPath(root, {'isParsingFiles': true, 'isUsingPathStyleNames': true}, function(err, useFilePath) {
+                expect(err).toBeNull();
+                expect(useFilePath).toBeDefined();
+                expect(useFilePath).not.toBeNull();
+                if (!_.isUndefined(useFilePath)) {
+                    var useData = fs.readJsonSync(useFilePath);
+                    expect(useData.TestIndex).toBeDefined();
+                    expect(useData.TestIndex).toEqual("./index");
+                    expect(useData["level1/Class1"]).toBeDefined();
+                    expect(useData["level1/Class1"]).toEqual("./level1/Class1");
+                    expect(useData["level1/level2/Class2"]).toBeDefined();
+                    expect(useData["level1/level2/Class2"]).toEqual("./level1/level2/file2");
+                }
+                done();
+            });
+        });
+
+        it("should support the isUsingJavaStyleNames option", function(done) {
+            async.mapPath(root, {'isParsingFiles': true, 'isUsingJavaStyleNames': true}, function(err, useFilePath) {
+                expect(err).toBeNull();
+                expect(useFilePath).toBeDefined();
+                expect(useFilePath).not.toBeNull();
+                if (!_.isUndefined(useFilePath)) {
+                    var useData = fs.readJsonSync(useFilePath);
+                    expect(useData.TestIndex).toBeDefined();
+                    expect(useData.TestIndex).toEqual("./index");
+                    expect(useData["level1.Class1"]).toBeDefined();
+                    expect(useData["level1.Class1"]).toEqual("./level1/Class1");
+                    expect(useData["level1.level2.Class2"]).toBeDefined();
+                    expect(useData["level1.level2.Class2"]).toEqual("./level1/level2/file2");
+                }
+                done();
+            });
+        });
+    });
+    
     describe("writeMap", function() {
         var rootDir = path.join(tmpDir, "./writeMap/"),
             filePath = path.join(rootDir, "./something.json");
