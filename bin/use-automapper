@@ -3,7 +3,8 @@
 
 var Automapper = require('../automap'),
     sc = require('subcommander'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    pathlib = require('path');
 
 var autoMapper = new Automapper();
 
@@ -19,8 +20,20 @@ sc.command('version', {
 sc.command('run', {
     desc: 'Automatically creates a use.json file for an existing Node project',
     callback: function(params) {
-        var options = {};
-        if (_.has(params, 'output') && !_.isEmpty(params.output)) {
+        var options = {},
+            path,
+            hasOutputParam = (_.has(params, 'output') && 
+                                !_.isEmpty(params.output));
+        if (!pathlib.isAbsolute(path)) {
+            // presume relative to cwd
+            path = pathlib.resolve(process.cwd(), params.path);
+        } else {
+            path = params.path;
+        }
+        if (hasOutputParam && !pathlib.isAbsolute(params.output)) {
+            // presume relative to cwd
+            options['outputPath'] = pathlib.resolve(process.cwd(), params.output);
+        } else if (hasOutputParam) {
             options['outputPath'] = params.output;
         }
         if (_.has(params, 'disable-file-parsing') && 
@@ -36,9 +49,9 @@ sc.command('run', {
             params['use-java-style-names'] === true) {
             options['isUsingJavaStyleNames'] = true;
         }
-        var mapPath = autoMapper.sync.mapPath(params.path, options);
+        var mapPath = autoMapper.sync.mapPath(path, options);
         console.log('complete');
-        console.log('map written to %s', mapPath);
+        console.log('project map written to %s', mapPath);
     }
 }).option('path', {
     'abbr': 'p',
