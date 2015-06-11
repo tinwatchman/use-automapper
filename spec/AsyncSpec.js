@@ -229,7 +229,7 @@ describe("AutomapperAsync", function() {
                 expect(err).toBeNull();
                 expect(writePath).toBeDefined();
                 expect(_.isString(writePath)).toBe(true);
-                expect(writePath.indexOf(path.join(rootDir, "./use.json")) > -1).toBe(true);
+                expect(writePath).toEqual(path.join(rootDir, "./use.json"));
                 expect(fs.existsSync(writePath)).toBe(true);
                 var mapData = fs.readJsonSync(writePath);
                 expect(mapData.MyName).toBeDefined();
@@ -250,12 +250,32 @@ describe("AutomapperAsync", function() {
                 expect(writePath).toBeDefined();
                 if (!_.isUndefined(writePath)) {
                     expect(_.isString(writePath)).toBe(true);
-                    expect(writePath.indexOf(filePath) > -1).toBe(true);
+                    expect(writePath).toEqual(path.normalize(filePath));
                     expect(fs.existsSync(filePath)).toBe(true);
-                    var mapData = fs.readJsonSync(writePath);
+                    var mapData = fs.readJsonSync(filePath);
                     expect(mapData.MyName).toBeDefined();
                     expect(mapData.MyName).toEqual("./MyFakePath/MyClass");
                     expect(mapData.MyOtherName).toBeDefined();
+                    expect(mapData.MyOtherName).toEqual("./MyOtherClass");
+                }
+                done();
+            });
+        });
+
+        it("should overwrite an existing file", function(done) {
+            fs.writeJsonSync(filePath, { 'isOriginalFile': true });
+            var testMap = {
+                "MyName": "./MyFakePath/MyClass",
+                "MyOtherName": "./MyOtherClass"
+            };
+            async.writeMap(testMap, {'filePath': filePath}, function(err, writePath) {
+                expect(err).toBeNull();
+                expect(writePath).toBeDefined();
+                if (!_.isUndefined(writePath)) {
+                    expect(writePath).toEqual(path.normalize(filePath));
+                    var mapData = fs.readJsonSync(filePath);
+                    expect(mapData.isOriginalFile).not.toBeDefined();
+                    expect(mapData.MyName).toEqual("./MyFakePath/MyClass");
                     expect(mapData.MyOtherName).toEqual("./MyOtherClass");
                 }
                 done();

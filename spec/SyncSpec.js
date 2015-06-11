@@ -132,15 +132,30 @@ describe("AutomapperSync", function() {
                 "MyName": "./MyFakePath/MyClass",
                 "MyOtherName": "./MyOtherClass"
             };
-            var writePath = sync.writeMap(testMap, {'rootDir': rootDir});
+            var writePath = sync.writeMap(testMap, {'rootDir': rootDir, 'filePath': filePath});
             expect(writePath).toBeDefined();
             expect(_.isString(writePath)).toBe(true);
-            expect(writePath.indexOf(path.join(rootDir, "./use.json")) > -1).toBe(true);
+            expect(writePath).toEqual(path.normalize(filePath));
             expect(fs.existsSync(writePath)).toBe(true);
             var mapData = fs.readJsonSync(writePath);
             expect(mapData.MyName).toBeDefined();
             expect(mapData.MyName).toEqual("./MyFakePath/MyClass");
             expect(mapData.MyOtherName).toBeDefined();
+            expect(mapData.MyOtherName).toEqual("./MyOtherClass");
+        });
+
+        it("should overwrite an existing JSON config file", function() {
+            fs.writeJsonSync(filePath, { 'isOriginalFile': true });
+            var testMap = {
+                "MyName": "./MyFakePath/MyClass",
+                "MyOtherName": "./MyOtherClass"
+            };
+            var writePath = sync.writeMap(testMap, {'rootDir': rootDir, 'filePath': filePath});
+            expect(writePath).toEqual(path.normalize(filePath));
+            expect(fs.existsSync(writePath)).toBe(true);
+            var mapData = fs.readJsonSync(writePath);
+            expect(mapData.isOriginalFile).not.toBeDefined();
+            expect(mapData.MyName).toEqual("./MyFakePath/MyClass");
             expect(mapData.MyOtherName).toEqual("./MyOtherClass");
         });
     });
