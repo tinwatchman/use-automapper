@@ -49,6 +49,7 @@ sc.command('run', {
             params['use-java-style-names'] === true) {
             options['isUsingJavaStyleNames'] = true;
         }
+        options['isVerbose'] = params.verbose;
         var mapPath = autoMapper.sync.mapPath(path, options);
         console.log('complete');
         console.log('project map written to %s', mapPath);
@@ -73,6 +74,11 @@ sc.command('run', {
 }).option('use-java-style-names', {
     'abbr': 'j',
     'desc': 'Adds Java-style package path to the beginning of a module\'s name, i.e. project.package.ClassName. Might help developers with namespacing/file locations.',
+    'flag': true,
+    'default': false
+}).option('verbose', {
+    'abbr': 'v',
+    'desc': 'Log debug info to console',
     'flag': true,
     'default': false
 });

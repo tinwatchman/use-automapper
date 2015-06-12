@@ -1,5 +1,6 @@
 {
     "AutomapperAsync": "./lib/async",
     "AutomapperSync": "./lib/sync",
-    "AutomapperCommonUtil": "./lib/util"
+    "AutomapperCommonUtil": "./lib/util",
+    "AutomapperLogger": "./lib/log"
 }

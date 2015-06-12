@@ -1,8 +1,5 @@
 describe("AutomapperSync", function() {
-    var use = require('use-import');
-    if (!use.isLoaded) {
-        use.load(require.resolve('../use.json'));
-    }
+    var use = require('use-import').load();
     var AutomapperSync = use('AutomapperSync');
     var fs = require('fs-extra');
     var path = require('path');
@@ -319,6 +316,18 @@ describe("AutomapperSync", function() {
             expect(useData.Class1).toEqual("./level1/Class1");
             expect(useData.Class2).toBeDefined();
             expect(useData.Class2).toEqual("./level1/level2/file2");
+        });
+
+        it("should support logging / verbose mode", function() {
+            var logs = [],
+                logFunc = function(msg) {
+                    logs.push(msg);
+                };
+            sync.setLogFunction(logFunc);
+            sync.isLoggingEnabled(true);
+            var useFilePath = sync.mapPath(root, {'isParsingFiles': true});
+            expect(useFilePath).not.toBeNull();
+            expect(logs.length > 0).toBe(true);
         });
     });
 });

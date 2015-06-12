@@ -1,8 +1,5 @@
 describe("AutomapperAsync", function() {
-    var use = require('use-import');
-    if (!use.isLoaded) {
-        use.load(require.resolve('../use.json'));
-    }
+    var use = require('use-import').load();
     var AutomapperAsync = use('AutomapperAsync');
     var AutomapperCommonUtil = use('AutomapperCommonUtil');
     var fs = require('fs-extra');
@@ -203,6 +200,21 @@ describe("AutomapperAsync", function() {
                     expect(useData["level1.level2.Class2"]).toBeDefined();
                     expect(useData["level1.level2.Class2"]).toEqual("./level1/level2/file2");
                 }
+                done();
+            });
+        });
+
+        it("should support logging / verbose mode", function(done) {
+            var logs = [],
+                logFunc = function(msg) {
+                    logs.push(msg);
+                };
+            async.setLogFunction(logFunc);
+            async.isLoggingEnabled(true);
+            async.mapPath(root, {'isParsingFiles': true}, function(err, useFilePath) {
+                expect(err).toBeNull();
+                expect(useFilePath).not.toBeNull();
+                expect(logs.length > 0).toBe(true);
                 done();
             });
         });

@@ -1,8 +1,5 @@
 describe("AutomapperCommonUtil", function() {
-    var use = require('use-import');
-    if (!use.isLoaded) {
-        use.load(require.resolve('../use.json'));
-    }
+    var use = require('use-import').load();
     var AutomapperCommonUtil = use("AutomapperCommonUtil");
     var util;
 

@@ -87,6 +87,30 @@ use-automapper run --disable-file-parsing
 use-automapper run -d
 ```
 
+### `--verbose`
+**Short form:*** `-v`
+
+Flag. Logs debug output to console.
+
+##### Example
+```sh
+use-automapper run --verbose
+use-automapper run -v
+```
+
+
+## Related Modules
+
+See also: [grunt-use-automapper](https://www.npmjs.com/package/grunt-use-automapper).
+
+
+## Changelist
+
++ v0.0.2
+  - Add `verbose` option / logging functionality
+  - Add unit tests for `AutomapperAsync.mapFiles`
+
+
 ## Credits and Licensing
 
 Created by [Jon Stout](http://www.jonstout.net). Licensed under [the MIT license](http://opensource.org/licenses/MIT).

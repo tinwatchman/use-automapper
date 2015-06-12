@@ -5,6 +5,7 @@ module.exports = (function() {
     var AutomapperAsync = use('AutomapperAsync');
     var AutomapperSync = use('AutomapperSync');
     var ownVersion = require('own-version');
+    var _ = require('underscore');
 
     var Automapper = function() {
         var async = new AutomapperAsync(),
@@ -26,11 +27,14 @@ module.exports = (function() {
          *                                          style names
          * @param  {Boolean}  isUsingJavaStyleNames Whether or not to use Java-
          *                                          style names
+         * @param  {Boolean}  isVerbose             Whether or not to send logs 
+         *                                          to the console
          * @param  {Function} callback              Callback function
          * @return {String}                         final path of the use.json
          *                                          file
          */
         this.async.mapPath = function(path, options, callback) {
+            checkForVerbose(options);
             async.mapPath(path, options, callback);
         };
 
@@ -49,11 +53,14 @@ module.exports = (function() {
          *                                          style names.
          * @param  {Boolean}  isUsingJavaStyleNames Whether or not to use Java-
          *                                          style names.
+         * @param  {Boolean}  isVerbose             Whether or not to send logs 
+         *                                          to the console
          * @param  {Function} callback              Callback function.
          * @return {String}                         Final path of the use.json
          *                                          file.
          */
         this.async.mapFiles = function(files, options, callback) {
+            checkForVerbose(options);
             async.mapFiles(files, options, callback);
         };
 
@@ -75,9 +82,12 @@ module.exports = (function() {
          *                                         create path-style names.
          * @param  {Boolean} isUsingJavaStyleNames Optional. Whether or not to
          *                                         create Java-style names.
+         * @param  {Boolean} isVerbose             Whether or not to send logs 
+         *                                         to the console
          * @return {String}                        Final path of the JSON file.
          */
         this.sync.mapPath = function(path, options) {
+            checkForVerbose(options);
             return sync.mapPath(path, options);
         };
 
@@ -97,15 +107,55 @@ module.exports = (function() {
          *                                         create path-style names.
          * @param  {Boolean} isUsingJavaStyleNames Optional. Whether or not to
          *                                         create Java-style names.
+         * @param  {Boolean} isVerbose             Whether or not to send logs 
+         *                                         to the console
          * @return {String}                        Final path of the JSON file.
          */
         this.sync.mapFiles = function(files, options) {
+            checkForVerbose(options);
             return sync.mapFiles(files, options);
         };
 
         // version
         this.version = function() {
             return ownVersion.sync();
+        };
+
+        /**
+         * Sets the logging function from outside of the library.
+         * @param {Function} func Logging function that accepts a string.
+         */
+        this.setLogFunction = function(func) {
+            async.setLogFunction(func);
+            sync.setLogFunction(func);
+        };
+
+        /**
+         * Enables logging
+         */
+        this.enableLogging = function() {
+            async.isLoggingEnabled(true);
+            sync.isLoggingEnabled(true);
+        };
+
+        /**
+         * Disables logging
+         */
+        this.disableLogging = function() {
+            async.isLoggingEnabled(false);
+            sync.isLoggingEnabled(false);       
+        };
+
+        /**
+         * Private function. Checks for the 'isVerbose' flag, enables logging
+         * if found.
+         * @param  {Object} options Options object
+         * @return {void}
+         */
+        var checkForVerbose = function(options) {
+            if (_.has(options, 'isVerbose') && options.isVerbose === true) {
+                this.enableLogging();
+            }
         };
     };
     Automapper.prototype = {};
