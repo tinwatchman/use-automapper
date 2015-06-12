@@ -81,6 +81,11 @@ use-automapper run -j
 
 Flag. Tells the utility not to check files for [name comments](#name-comments). May speed up the process for those not using this feature.
 
+##### Example
+```sh
+use-automapper run --disable-file-parsing
+use-automapper run -d
+```
 
 ## Credits and Licensing
 

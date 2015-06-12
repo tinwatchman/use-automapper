@@ -207,7 +207,58 @@ describe("AutomapperAsync", function() {
             });
         });
     });
-    
+
+    describe("mapFiles", function() {
+        it("should exist", function() {
+            expect(async.mapFiles).toBeDefined();
+            expect(_.isFunction(async.mapFiles)).toBe(true);
+        });
+
+        it("should produce a JSON map of the given files", function(done) {
+            // set up test
+            var root = path.join(tmpDir, "./mapFiles"),
+                indexFile = path.join(root, "./index.js"),
+                level1 = path.join(root, "./level1"),
+                file1 = path.join(level1, "./Class1.js"),
+                level2 = path.join(level1, "./level2"),
+                file2 = path.join(level2, "./file2.js"),
+                file3 = path.join(level2, "./Class3.js");
+            fs.ensureDirSync(root);
+            fs.ensureDirSync(level1);
+            fs.ensureDirSync(level2);
+            fs.writeFileSync(indexFile, "/* use-automapper: TestIndex */", {'encoding': 'utf8'});
+            fs.ensureFileSync(file1);
+            fs.writeFileSync(file2, "\n\n/* use-automapper: Class2 */\n\n");
+            fs.ensureFileSync(file3);
+            // run test
+            var output = path.join(root, './config.json'),
+                files = [ indexFile, file1, file2, file3 ]
+                options = {
+                    rootDir: root,
+                    outputPath: output,
+                    isParsingFiles: true
+                };
+            async.mapFiles(files, options, function(err, filePath) {
+                expect(err).toBeNull();
+                expect(filePath).toBeDefined();
+                expect(filePath).not.toBeNull();
+                expect(filePath).toEqual(output);
+                var useData = fs.readJsonSync(output);
+                expect(useData.TestIndex).toBeDefined();
+                expect(useData.TestIndex).toEqual("./index");
+                expect(useData.Class1).toBeDefined();
+                expect(useData.Class1).toEqual("./level1/Class1");
+                expect(useData.Class2).toBeDefined();
+                expect(useData.Class2).toEqual("./level1/level2/file2");
+                expect(useData.Class3).toBeDefined();
+                expect(useData.Class3).toEqual("./level1/level2/Class3");
+                // clean up
+                fs.removeSync(root);
+                done();
+            });
+        });
+    });
+
     describe("writeMap", function() {
         var rootDir = path.join(tmpDir, "./writeMap/"),
             filePath = path.join(rootDir, "./something.json");

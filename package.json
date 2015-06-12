@@ -1,6 +1,6 @@
 {
   "name": "use-automapper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Automatically creates config files for `use-import`",
   "preferGlobal": true,
   "main": "automap.js",
@@ -21,6 +21,7 @@
   },
   "keywords": [
     "use",
+    "use-import",
     "require",
     "import",
     "module"
