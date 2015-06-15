@@ -106,6 +106,8 @@ See also: [grunt-use-automapper](https://www.npmjs.com/package/grunt-use-automap
 
 ## Changelist
 
++ v0.0.3
+  - Client bug fix
 + v0.0.2
   - Add `verbose` option / logging functionality
   - Add unit tests for `AutomapperAsync.mapFiles`

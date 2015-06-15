@@ -1,6 +1,6 @@
 {
   "name": "use-automapper",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Automatically creates config files for `use-import`",
   "preferGlobal": true,
   "main": "automap.js",
@@ -31,7 +31,7 @@
     "own-version": "0.0.2",
     "subcommander": "^0.1.3",
     "underscore": "^1.8.3",
-    "use-import": "^0.1.1"
+    "use-import": "^0.1.2"
   },
   "devDependencies": {
     "fs-extra": "^0.18.4",
