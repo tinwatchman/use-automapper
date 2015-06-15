@@ -24,7 +24,7 @@ sc.command('run', {
             path,
             hasOutputParam = (_.has(params, 'output') && 
                                 !_.isEmpty(params.output));
-        if (!pathlib.isAbsolute(path)) {
+        if (!pathlib.isAbsolute(params.path)) {
             // presume relative to cwd
             path = pathlib.resolve(process.cwd(), params.path);
         } else {
