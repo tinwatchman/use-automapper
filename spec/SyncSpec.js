@@ -48,13 +48,15 @@ describe("AutomapperSync", function() {
         var root = path.join(tmpDir, "./getJsFiles"),
             level1 = path.join(root, "./level1"),
             level12 = path.join(root, "./level1.2"),
-            level2 = path.join(level12, "./level2");
+            level2 = path.join(level12, "./level2"),
+            nodeModules = path.join(root, "./node_modules");
 
         beforeEach(function() {
             fs.ensureDirSync(root);
             fs.ensureDirSync(level1);
             fs.ensureDirSync(level12);
             fs.ensureDirSync(level2);
+            fs.ensureDirSync(nodeModules);
         });
 
         afterEach(function() {
@@ -104,6 +106,49 @@ describe("AutomapperSync", function() {
             }
             expect(err).toBeDefined();
             expect(result).not.toBeDefined();
+        });
+
+        it("should exclude node_modules files by default", function() {
+            // set up files
+            var file1 = path.join(root, "./file1.js"),
+                file2 = path.join(level1, "./file2.js"),
+                file3 = path.join(level2, "./file3.js"),
+                modfile1 = path.join(nodeModules, "./mod1/mod1.js"),
+                modfile2 = path.join(nodeModules, "./mod2/mod2.js");
+            fs.ensureFileSync(file1);
+            fs.ensureFileSync(file2);
+            fs.ensureFileSync(file3);
+            fs.ensureFileSync(modfile1);
+            fs.ensureFileSync(modfile2);
+            
+            var result = sync.getJsFiles(root);
+
+            expect(result.rootDir).toBeDefined();
+            expect(result.rootDir).not.toBeNull();
+            expect(path.normalize(result.rootDir)).toEqual(path.normalize(root));
+            expect(result.files).toBeDefined();
+            expect(result.files.length).toEqual(3);
+        });
+
+        it("should include node_modules files if requested", function() {
+            var file1 = path.join(root, "./file1.js"),
+                file2 = path.join(level1, "./file2.js"),
+                file3 = path.join(level2, "./file3.js"),
+                modfile1 = path.join(nodeModules, "./mod1/mod1.js"),
+                modfile2 = path.join(nodeModules, "./mod2/mod2.js");
+            fs.ensureFileSync(file1);
+            fs.ensureFileSync(file2);
+            fs.ensureFileSync(file3);
+            fs.ensureFileSync(modfile1);
+            fs.ensureFileSync(modfile2);
+            
+            var result = sync.getJsFiles(root, true);
+
+            expect(result.rootDir).toBeDefined();
+            expect(result.rootDir).not.toBeNull();
+            expect(path.normalize(result.rootDir)).toEqual(path.normalize(root));
+            expect(result.files).toBeDefined();
+            expect(result.files.length).toEqual(5);
         });
     });
 

@@ -8,7 +8,7 @@ describe("AutomapperAsync", function() {
 
     var async,
         util = new AutomapperCommonUtil(),
-        tmpDir = path.join(__dirname, "./AutomapperAsync" + Date.now() + "/");
+        tmpDir = path.join(__dirname, "AutomapperAsync" + Date.now());
 
     beforeAll(function() {
         fs.ensureDirSync(tmpDir);
@@ -26,13 +26,15 @@ describe("AutomapperAsync", function() {
         var root = path.join(tmpDir, "./getJsFiles"),
             level1 = path.join(root, "./level1"),
             level12 = path.join(root, "./level1.2"),
-            level2 = path.join(level12, "./level2");
+            level2 = path.join(level12, "./level2"),
+            nodeModules = path.join(root, "./node_modules");
 
         beforeEach(function() {
             fs.ensureDirSync(root);
             fs.ensureDirSync(level1);
             fs.ensureDirSync(level12);
             fs.ensureDirSync(level2);
+            fs.ensureDirSync(nodeModules);
         });
 
         afterEach(function() {
@@ -48,7 +50,7 @@ describe("AutomapperAsync", function() {
             fs.ensureFileSync(file2);
             fs.ensureFileSync(file3);
             // run async
-            async.getJsFiles(root, function(err, result) {
+            async.getJsFiles(root, {}, function(err, result) {
                 expect(result.root).toBeDefined();
                 expect(result.root).not.toBeNull();
                 expect(path.normalize(result.root)).toEqual(path.normalize(root));
@@ -59,7 +61,7 @@ describe("AutomapperAsync", function() {
         });
 
         it("should return as empty if there are no JS files", function(done) {
-            async.getJsFiles(root, function(err, result) {
+            async.getJsFiles(root, {}, function(err, result) {
                 expect(err).toBeNull();
                 expect(result.root).toBeDefined();
                 expect(result.root).not.toBeNull();
@@ -72,9 +74,53 @@ describe("AutomapperAsync", function() {
 
         it("should return an error if given a nonexisting path", function(done) {
             var fakePath = path.join(level12, "./MyFakePath/");
-            async.getJsFiles(fakePath, function(err, result) {
+            async.getJsFiles(fakePath, {}, function(err, result) {
                 expect(err).not.toBeNull();
                 expect(result).not.toBeDefined();
+                done();
+            });
+        });
+
+        it("should exclude node_modules files by default", function(done) {
+            // set up files
+            var file1 = path.join(root, "./file1.js"),
+                file2 = path.join(level1, "./file2.js"),
+                file3 = path.join(level2, "./file3.js"),
+                modfile1 = path.join(nodeModules, "./mod1/mod1.js"),
+                modfile2 = path.join(nodeModules, "./mod2/mod2.js");
+            fs.ensureFileSync(file1);
+            fs.ensureFileSync(file2);
+            fs.ensureFileSync(file3);
+            fs.ensureFileSync(modfile1);
+            fs.ensureFileSync(modfile2);
+            async.getJsFiles(root, {}, function(err, result) {
+                expect(err).toBeNull();
+                expect(result).toBeDefined();
+                expect(result).not.toBeNull();
+                expect(result.files).toBeDefined();
+                expect(result.files.length).toEqual(3);
+                done();
+            });
+        });
+
+        it("should include node_modules files if requested", function(done) {
+            // set up files
+            var file1 = path.join(root, "./file1.js"),
+                file2 = path.join(level1, "./file2.js"),
+                file3 = path.join(level2, "./file3.js"),
+                modfile1 = path.join(nodeModules, "./mod1/mod1.js"),
+                modfile2 = path.join(nodeModules, "./mod2/mod2.js");
+            fs.ensureFileSync(file1);
+            fs.ensureFileSync(file2);
+            fs.ensureFileSync(file3);
+            fs.ensureFileSync(modfile1);
+            fs.ensureFileSync(modfile2);
+            async.getJsFiles(root, {'includeNodeModules': true}, function(err, result) {
+                expect(err).toBeNull();
+                expect(result).toBeDefined();
+                expect(result).not.toBeNull();
+                expect(result.files).toBeDefined();
+                expect(result.files.length).toEqual(5);
                 done();
             });
         });

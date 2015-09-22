@@ -46,6 +46,17 @@ describe("AutomapperCommonUtil", function() {
         });
     });
 
+    describe("isNodeModule", function() {
+        it("should return true when the given path is within a node_modules folder, false otherwise", function() {
+            expect(util.isNodeModule("/Users/someone/something/node_modules/module/index.js")).toBe(true);
+            expect(util.isNodeModule("/Users/someone/something/node_modules/module/src/lib/submodule.js")).toBe(true);
+        });
+        it("should return false when the given path is *not* within a node_modules folder", function() {
+            expect(util.isNodeModule("/Users/someone/somepath/file.js")).toBe(false);
+            expect(util.isNodeModule("/Users/someone/something/src/lib/Class1.js")).toBe(false);
+        });
+    });
+
     describe("getPathStyleName", function() {
         it("should return the path of a module as its name", function() {
             expect(util.getPathStyleName("MyClass", "./a/b/c/MyClass")).toEqual("a/b/c/MyClass");

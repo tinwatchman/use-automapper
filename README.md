@@ -87,6 +87,17 @@ use-automapper run --disable-file-parsing
 use-automapper run -d
 ```
 
+### `--include-node-modules`
+**Short form:*** `-m`
+
+Flag. Tells the utility to include the JavaScript files found within `node_modules` folders (which are otherwise ignored by default).
+
+##### Example
+```sh
+use-automapper run --include-node-modules
+use-automapper run -m
+```
+
 ### `--verbose`
 **Short form:*** `-v`
 
@@ -106,6 +117,8 @@ See also: [grunt-use-automapper](https://www.npmjs.com/package/grunt-use-automap
 
 ## Changelist
 
++ v0.0.4
+  - Now ignores files within `node_modules` by default. This can be overridden using the `--include-node-modules` flag.
 + v0.0.3
   - Client bug fix
 + v0.0.2

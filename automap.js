@@ -23,6 +23,10 @@ module.exports = (function() {
          *                                          map to. Optional.
          * @param  {Boolean}  isParsingFiles        Whether or not to parse 
          *                                          files for names in comments
+         * @param  {Boolean}  includeNodeModules    Whether or not to include 
+         *                                          the .js files inside of 
+         *                                          `node_modules` folders in 
+         *                                          the final map
          * @param  {Boolean}  isUsingPathStyleNames Whether or not to use path-
          *                                          style names
          * @param  {Boolean}  isUsingJavaStyleNames Whether or not to use Java-
@@ -78,6 +82,10 @@ module.exports = (function() {
          * @param  {Boolean} isParsingFiles        Optional. Whether or not to
          *                                         parse files for names in the
          *                                         comments.
+         * @param  {Boolean} includeNodeModules    Optional. Whether or not to 
+         *                                         include the .js files inside 
+         *                                         of `node_modules` folders in 
+         *                                         the final map.
          * @param  {Boolean} isUsingPathStyleNames Optional. Whether or not to
          *                                         create path-style names.
          * @param  {Boolean} isUsingJavaStyleNames Optional. Whether or not to

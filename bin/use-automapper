@@ -42,6 +42,12 @@ sc.command('run', {
         } else {
             options['isParsingFiles'] = true;
         }
+        if (_.has(params, 'include-node-modules') && 
+            params['include-node-modules'] === true) {
+            options['includeNodeModules'] = true;
+        }  else {
+            options['includeNodeModules'] = false;
+        }
         if (_.has(params, 'use-path-style-names') && 
             params['use-path-style-names'] === true) {
             options['isUsingPathStyleNames'] = true;
@@ -64,6 +70,11 @@ sc.command('run', {
 }).option('disable-file-parsing', {
     'abbr': 'd',
     'desc': 'Disables parsing the file content for commented names.',
+    'flag': true,
+    'default': false
+}).option('include-node-modules', {
+    'abbr': 'm',
+    'desc': 'Includes the .js files inside of `node_modules` within the final map.',
     'flag': true,
     'default': false
 }).option('use-path-style-names', {
